@@ -68,7 +68,6 @@
         <h3>{{ quarter }}</h3>
         <button @click="startTimer" v-if="!timerRunning">Iniciar</button>
         <button @click="pauseTimer" v-if="timerRunning">Pausar</button>
-        <button @click="resetTimer">Reiniciar</button>
         <button @click="nextQuarter">Next Qrt</button>
         <button @click="resetAll">Reset Total</button>
       </div>
@@ -95,17 +94,17 @@
 export default {
   data() {
     return {
-      localScore: 0, // Puntos del equipo local
-      visitorScore: 0, // Puntos del equipo visitante
-      localFouls: 0, // Faltas acumuladas del equipo local
-      visitorFouls: 0, // Faltas acumuladas del equipo visitante
-      minutes: 10, // Tiempo inicial en minutos
-      seconds: 0, // Tiempo inicial en segundos
-      quarter: 1, // Cuarto del juego
-      timer: null, // Referencia del temporizador
-      timerRunning: false, // Bandera para saber si el temporizador está corriendo
-      team1Logo: null, // Imagen del equipo 1
-      team2Logo: null // Imagen del equipo 2
+      localScore: 0,
+      visitorScore: 0,
+      localFouls: 0,
+      visitorFouls: 0,
+      minutes: 10,
+      seconds: 0,
+      quarter: 1,
+      timer: null,
+      timerRunning: false,
+      team1Logo: null,
+      team2Logo: null
     };
   },
   computed: {
@@ -144,10 +143,10 @@ export default {
       this.visitorScore += points;
     },
     incrementLocalFouls() {
-      this.localFouls = (this.localFouls + 1) % 6; // Aumenta faltas y vuelve a 0 al llegar a 5
+      this.localFouls = (this.localFouls + 1) % 6;
     },
     incrementVisitorFouls() {
-      this.visitorFouls = (this.visitorFouls + 1) % 6; // Aumenta faltas y vuelve a 0 al llegar a 5
+      this.visitorFouls = (this.visitorFouls + 1) % 6;
     },
     startTimer() {
       if (!this.timerRunning) {
@@ -173,24 +172,25 @@ export default {
         this.seconds--;
       } else if (this.seconds === 0 && this.minutes === 0) {
         this.pauseTimer(); // Detener el temporizador cuando llega a 0
+        this.nextQuarter(); // Aumentar el cuarto cuando el tiempo llega a 0
       }
     },
     nextQuarter() {
-      this.quarter++; // Permitir avanzar indefinidamente para incluir tiempos extras
-      this.resetTimer(); // Reiniciar el temporizador al cambiar de cuarto
+      this.quarter++; // Incrementa el cuarto cuando el temporizador llega a 0
+      this.resetTimer(); // Reiniciar el temporizador para el nuevo cuarto
     },
     resetAll() {
-      // Resetear todo a su estado inicial
       this.localScore = 0;
       this.visitorScore = 0;
       this.localFouls = 0;
       this.visitorFouls = 0;
       this.quarter = 1;
-      this.resetTimer();
+      this.resetTimer(); // Reinicia el juego completo
     }
   }
 };
 </script>
+
 
 <style scoped>
 /* Estilos generales */
@@ -297,7 +297,7 @@ input[type="file"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   text-align: center;
 }
 
@@ -351,14 +351,13 @@ button:hover {
 
 /* Controles de la columna del medio */
 .quarter-info {
+  flex:0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  flex: 1;
+  justify-content: center;
   text-align: center;
-  margin: 0 50px;
-  height: 100%;
+  width: auto;
 }
 
 .quarter-info h3 {
@@ -366,11 +365,18 @@ button:hover {
   margin-bottom: 20px;
 }
 
+/* Botones en pantallas grandes */
 .quarter-info button {
-  display: block;
-  width: 200px;
+  width: 150px;
+  aspect-ratio: 1 / 1; /* Mantener relación cuadrada */
   margin: 10px auto;
   font-size: 24px;
+  padding: 10px;
+  background-color: #9f260c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
 }
 
 .quarter-info button:hover {
@@ -379,17 +385,38 @@ button:hover {
 
 /* Media Queries para pantallas móviles */
 @media (max-width: 768px) {
-  /* Los logos desaparecen en pantallas pequeñas */
+
+   /* Ajustes para pantallas móviles */
+
+   .timer-bar {
+    height: 15vh; /* Reducir la altura del bloque del temporizador */
+    padding: 0 20px; /* Reducir el padding para que sea más estrecho */
+    justify-content: center; /* Centrar el temporizador en pantallas pequeñas */
+  }
+
+  .timer-bar h1 {
+    font-size: 18vw; /* Escalar el tamaño del texto en móviles */
+  }
+
+  /* Ocultar los nombres de los equipos y mostrar los logos en pantallas pequeñas */
+  .team-name {
+    display: none; /* Ocultar nombres de los equipos */
+  }
+
   .team-logo {
-    display: none;
+    display: flex; /* Mostrar los logos */
+    width: 25vw;
+    height: 25vw;
+    max-width: 100px;
+    max-height: 100px;
   }
 
   /* Mantener las 3 columnas, pero ajustar tamaños */
   .main-content {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    padding: 0 20px;
+    justify-content: center;
+    padding: 0 20%;
   }
 
   /* Ajuste de la columna del equipo */
@@ -425,19 +452,17 @@ button:hover {
     min-width: 50px;
   }
 
-  /* Ajuste para los botones de la columna del medio */
-  .quarter-info {
-    margin: 0;
+   /* Ajustar tamaño de los botones de la columna del medio en pantallas pequeñas */
+   .quarter-info button {
+    width: 80px;
+    aspect-ratio: 1 / 1;
+    font-size: 3.5vw; /* Ajuste del tamaño del texto */
+    padding: 8px;
   }
 
+  /* Otros ajustes de la columna del medio en pantallas pequeñas */
   .quarter-info h3 {
     font-size: 8vw;
-  }
-
-  .quarter-info button {
-    font-size: 4vw; /* Reducir tamaño de los botones */
-    padding: 8px;
-    width: 150px; /* Reducir el ancho de los botones */
   }
 }
 
