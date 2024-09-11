@@ -2,27 +2,53 @@
   <div id="scoreboard">
     <!-- Temporizador grande con los logos de los equipos a los lados -->
     <div class="timer-bar">
-      <!-- Logo del equipo 1 -->
-      <div class="team-logo" @click="triggerFileInput('team1')">
-        <input type="file" ref="team1FileInput" @change="onImageChange($event, 'team1')" accept="image/*" />
-        <img v-if="team1Logo" :src="team1Logo" alt="Logo del equipo 1" />
-        <span v-else>Subir Logo</span>
+      <!-- Columna del equipo 1 -->
+      <div class="team-container">
+        <input
+          v-model="team1Name"
+          type="text"
+          class="team-name"
+          placeholder="HOME"
+        />
+        <div class="team-logo" @click="triggerFileInput('team1')">
+          <input
+            type="file"
+            ref="team1FileInput"
+            @change="onImageChange($event, 'team1')"
+            accept="image/*"
+          />
+          <img v-if="team1Logo" :src="team1Logo" alt="Logo del equipo 1" />
+          <span v-if="!team1Logo" class="plus-symbol">+</span>
+        </div>
       </div>
 
-      <!-- Temporizador -->
+      <!-- Temporizador en el centro -->
       <h1>{{ formattedTime }}</h1>
 
-      <!-- Logo del equipo 2 -->
-      <div class="team-logo" @click="triggerFileInput('team2')">
-        <input type="file" ref="team2FileInput" @change="onImageChange($event, 'team2')" accept="image/*" />
-        <img v-if="team2Logo" :src="team2Logo" alt="Logo del equipo 2" />
-        <span v-else>Subir Logo</span>
+      <!-- Columna del equipo 2 -->
+      <div class="team-container">
+        <input
+          v-model="team2Name"
+          type="text"
+          class="team-name"
+          placeholder="VISITOR"
+        />
+        <div class="team-logo" @click="triggerFileInput('team2')">
+          <input
+            type="file"
+            ref="team2FileInput"
+            @change="onImageChange($event, 'team2')"
+            accept="image/*"
+          />
+          <img v-if="team2Logo" :src="team2Logo" alt="Logo del equipo 2" />
+          <span v-if="!team2Logo" class="plus-symbol">+</span>
+        </div>
       </div>
     </div>
 
-    <!-- Sección del marcador -->
+    <!-- Sección del marcador en tres columnas -->
     <div class="main-content">
-      <!-- Equipo 1 -->
+      <!-- Columna del equipo 1 -->
       <div class="team">
         <div class="points">{{ localScore }}</div>
         <div class="fouls" @click="incrementLocalFouls">
@@ -33,12 +59,11 @@
         </div>
         <div class="buttons">
           <button @click="incrementLocalScore(1)">+1</button>
-          <button @click="incrementLocalScore(2)">+2</button>
-          <button @click="incrementLocalScore(3)">+3</button>
+          <button @click="incrementLocalScore(-1)">-1</button>
         </div>
       </div>
 
-      <!-- Cuarto y control del temporizador en el centro -->
+      <!-- Columna central del temporizador y controles -->
       <div class="quarter-info">
         <h3>{{ quarter }}</h3>
         <button @click="startTimer" v-if="!timerRunning">Iniciar</button>
@@ -48,7 +73,7 @@
         <button @click="resetAll">Reset Total</button>
       </div>
 
-      <!-- Equipo 2 -->
+      <!-- Columna del equipo 2 -->
       <div class="team">
         <div class="points">{{ visitorScore }}</div>
         <div class="fouls" @click="incrementVisitorFouls">
@@ -59,8 +84,7 @@
         </div>
         <div class="buttons">
           <button @click="incrementVisitorScore(1)">+1</button>
-          <button @click="incrementVisitorScore(2)">+2</button>
-          <button @click="incrementVisitorScore(3)">+3</button>
+          <button @click="incrementVisitorScore(-1)">-1</button>
         </div>
       </div>
     </div>
@@ -169,19 +193,20 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos generales */
 #scoreboard {
   display: flex;
   flex-direction: column;
   height: 100vh;
   background-color: #5c0818;
   color: white;
-  overflow: hidden; /* Evita el desplazamiento */
+  overflow: hidden;
 }
 
-/* Temporizador grande en la parte superior */
+/* Temporizador en la parte superior */
 .timer-bar {
   width: 100%;
-  height: 30vh; /* Ocupa el 30% de la pantalla */
+  height: 30vh;
   background-color: white;
   display: flex;
   justify-content: space-between;
@@ -191,14 +216,36 @@ export default {
 }
 
 .timer-bar h1 {
-  font-size: 250px; /* Tamaño más grande para el tiempo */
+  font-size: 10vw;
   color: #5c0818;
   margin: 0;
 }
 
+.team-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-name {
+  font-size: 1.5vw;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #333;
+  background-color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 200px;
+  box-sizing: border-box;
+}
+
 .team-logo {
-  width: 150px;
-  height: 150px;
+  width: 20vw;
+  height: 20vw;
+  max-width: 150px;
+  max-height: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -206,8 +253,21 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  border: 2px solid #ccc; /* Añadir borde para visualización */
-  box-sizing: border-box;
+  border: 2px solid #ccc;
+  position: relative;
+}
+
+.plus-symbol {
+  font-size: 50px;
+  color: #ccc;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.team-logo img ~ .plus-symbol {
+  display: none;
 }
 
 .team-logo img {
@@ -216,78 +276,93 @@ export default {
   object-fit: contain;
 }
 
-.team-logo span {
-  font-size: 16px;
-  color: #555;
-}
-
 input[type="file"] {
   display: none;
 }
 
+/* Mantener tres columnas principales */
 .main-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex: 1;
   padding: 0 50px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
+/* Columnas de los equipos */
 .team {
-  text-align: center;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  text-align: center;
 }
 
 .points {
-  font-size: 200px; /* Hacer los puntos más grandes */
-  margin: 20px 0;
+  font-size: 12vw;
+  margin: 10px 0;
 }
 
+.fouls {
+  margin-top: 10px;
+  font-size: 8vw;
+  cursor: pointer;
+}
+
+.fouls p {
+  font-size: 2vw;
+  margin: 0;
+}
+
+.fouls-critical {
+  color: #ce0529;
+}
+
+/* Ajuste de los botones de +1 y -1 */
 .buttons {
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 10px;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 300px;
 }
 
 button {
-  padding: 20px;
-  font-size: 20px; /* Botones más grandes */
+  padding: 15px;
+  font-size: 5vw;
   background-color: #9f260c;
   color: white;
   border: none;
   cursor: pointer;
-  margin-top: 10px;
+  flex: 1;
+  min-width: 60px;
+  box-sizing: border-box;
+  margin: 0 10px;
 }
 
 button:hover {
   background-color: #bc1718;
 }
 
-
-/* Faltas */
-.fouls {
-  margin-top: 20px;
-  font-size: 100px; /* Tamaño más grande para las faltas */
-  cursor: pointer;
-}
-
-.fouls p {
-  font-size: 40px; /* Texto "Faltas" */
-  margin: 0;
-}
-
-.fouls-critical {
-  color: #5c0818; /* Cambiar a rojo cuando hay 5 faltas */
-}
-
-/* Información del cuarto y controles */
+/* Controles de la columna del medio */
 .quarter-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  flex: 1;
   text-align: center;
   margin: 0 50px;
+  height: 100%;
 }
 
 .quarter-info h3 {
-  font-size: 70px; /* Tamaño más grande para el cuarto */
+  font-size: 6vw;
   margin-bottom: 20px;
 }
 
@@ -301,4 +376,70 @@ button:hover {
 .quarter-info button:hover {
   background-color: #bc1718;
 }
+
+/* Media Queries para pantallas móviles */
+@media (max-width: 768px) {
+  /* Los logos desaparecen en pantallas pequeñas */
+  .team-logo {
+    display: none;
+  }
+
+  /* Mantener las 3 columnas, pero ajustar tamaños */
+  .main-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  /* Ajuste de la columna del equipo */
+  .team {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Estilo responsivo para los puntos */
+  .points {
+    font-size: 18vw;
+  }
+
+  /* Estilo responsivo para las faltas */
+  .fouls {
+    font-size: 12vw;
+  }
+
+  .fouls p {
+    font-size: 4vw;
+  }
+
+  /* Estilo responsivo para los botones de +1 y -1 */
+  .buttons {
+    flex-direction: column; /* Cambiar disposición de botones uno sobre otro */
+    gap: 10px;
+    max-width: 150px; /* Reducir el ancho máximo para pantallas pequeñas */
+  }
+
+  button {
+    font-size: 6vw;
+    padding: 10px;
+    min-width: 50px;
+  }
+
+  /* Ajuste para los botones de la columna del medio */
+  .quarter-info {
+    margin: 0;
+  }
+
+  .quarter-info h3 {
+    font-size: 8vw;
+  }
+
+  .quarter-info button {
+    font-size: 4vw; /* Reducir tamaño de los botones */
+    padding: 8px;
+    width: 150px; /* Reducir el ancho de los botones */
+  }
+}
+
+
 </style>
