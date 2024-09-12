@@ -198,7 +198,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #5c0818;
+  background-color:#5c0818;
   color: white;
   overflow: hidden;
 }
@@ -223,6 +223,7 @@ export default {
 
 .team-container {
   display: flex;
+  flex: 0.4;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -283,27 +284,29 @@ input[type="file"] {
 /* Mantener tres columnas principales */
 .main-content {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-around;
+  align-content: flex-start;
+  align-items: flex-start;
   flex: 1;
-  padding: 0 50px;
   box-sizing: border-box;
   width: 100%;
 }
 
+
+
 /* Columnas de los equipos */
 .team {
-  flex: 1;
+  flex: 0.4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   text-align: center;
 }
 
 .points {
   font-size: 12vw;
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 
 .fouls {
@@ -323,19 +326,21 @@ input[type="file"] {
 
 /* Ajuste de los botones de +1 y -1 */
 .buttons {
-  display: flex;
+  display: inline-block;
   justify-content: center;
   gap: 30px;
   margin-top: 10px;
   flex-wrap: nowrap;
-  width: 100%;
-  max-width: 300px;
+  width: auto;
+  max-width: 100%;
+  min-width: 80px;
 }
 
 button {
   padding: 15px;
   font-size: 5vw;
   background-color: #9f260c;
+  font-size: 2rem;
   color: white;
   border: none;
   cursor: pointer;
@@ -351,27 +356,27 @@ button:hover {
 
 /* Controles de la columna del medio */
 .quarter-info {
-  flex:0;
+  flex:0.4;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
   text-align: center;
   width: auto;
 }
 
 .quarter-info h3 {
   font-size: 6vw;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 /* Botones en pantallas grandes */
 .quarter-info button {
-  width: 150px;
+  width: 100px;
   aspect-ratio: 1 / 1; /* Mantener relación cuadrada */
   margin: 10px auto;
   font-size: 24px;
-  padding: 10px;
   background-color: #9f260c;
   color: white;
   border: none;
